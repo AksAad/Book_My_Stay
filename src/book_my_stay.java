@@ -1,5 +1,6 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+
 
 
 class RoomInventory {
@@ -12,35 +13,53 @@ class RoomInventory {
 
     public void registerRoomType(String roomType, int count) {
         inventory.put(roomType, count);
-        System.out.println(roomType + " registered with " + count + " rooms.");
     }
+
     public int getAvailability(String roomType) {
         return inventory.getOrDefault(roomType, 0);
     }
 
-    public void updateAvailability(String roomType, int change) {
+    public Set<String> getAllRoomTypes() {
+        return inventory.keySet();
+    }
+}
 
-        int current = inventory.getOrDefault(roomType, 0);
-        int updated = current + change;
 
-        if (updated < 0) {
-            System.out.println("Cannot reduce rooms below zero for " + roomType);
-            return;
-        }
+class SearchService {
 
-        inventory.put(roomType, updated);
-        System.out.println("Updated availability for " + roomType + ": " + updated);
+    private RoomInventory inventory;
+    private HashMap<String, Room> roomCatalog;
+
+    public SearchService(RoomInventory inventory, HashMap<String, Room> roomCatalog) {
+        this.inventory = inventory;
+        this.roomCatalog = roomCatalog;
     }
 
-    public void displayInventory() {
 
-        System.out.println("\nCurrent Room Inventory:");
+    public void searchAvailableRooms() {
 
-        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue() + " rooms available");
+        System.out.println("Available Rooms:\n");
+
+        for (String roomType : inventory.getAllRoomTypes()) {
+
+            int available = inventory.getAvailability(roomType);
+
+            if (available > 0) {
+
+                Room room = roomCatalog.get(roomType);
+
+                if (room != null) {
+                    System.out.println("Room Type: " + room.getType());
+                    System.out.println("Price: $" + room.getPrice());
+                    System.out.println("Amenities: " + room.getAmenities());
+                    System.out.println("Available Rooms: " + available);
+                    System.out.println("-----------------------------");
+                }
+            }
         }
     }
 }
+
 
 public class book_my_stay {
 
@@ -50,15 +69,21 @@ public class book_my_stay {
 
         inventory.registerRoomType("Standard", 10);
         inventory.registerRoomType("Deluxe", 5);
-        inventory.registerRoomType("Suite", 3);
+        inventory.registerRoomType("Suite", 0); // unavailable
 
-        inventory.displayInventory();
-        inventory.updateAvailability("Standard", -2);
+        HashMap<String, Room> roomCatalog = new HashMap<>();
 
-        inventory.updateAvailability("Deluxe", 1);
+        roomCatalog.put("Standard",
+                new Room("Standard", 120.0, "WiFi, TV, Queen Bed"));
 
-        inventory.displayInventory();
+        roomCatalog.put("Deluxe",
+                new Room("Deluxe", 200.0, "WiFi, TV, King Bed, Mini Bar"));
 
-        System.out.println("\nSuite rooms available: " + inventory.getAvailability("Suite"));
+        roomCatalog.put("Suite",
+                new Room("Suite", 350.0, "WiFi, TV, King Bed, Living Area"));
+
+        SearchService searchService = new SearchService(inventory, roomCatalog);
+
+        searchService.searchAvailableRooms();
     }
 }

@@ -1,32 +1,24 @@
-public abstract class Room {
-    private String roomType;
-    private int beds;
-    private int size;
+class Room {
+
+    private String type;
     private double price;
+    private String amenities;
 
-    public Room(String roomType, int beds, int size, double price) {
-        this.roomType = roomType;
-        this.beds = beds;
-        this.size = size;
+    public Room(String type, double price, String amenities) {
+        this.type = type;
         this.price = price;
+        this.amenities = amenities;
     }
 
-    public String getRoomType() {
-        return roomType;
+    public String getType() {
+        return type;
     }
-    public int getBeds() {
-        return beds;
-    }
-    public int getSize() {
-        return size;
-    }
+
     public double getPrice() {
         return price;
     }
-    public void displayRoomDetails() {
-        System.out.println("Room Type : " + roomType);
-        System.out.println("Beds      : " + beds);
-        System.out.println("Size      : " + size + " sq.ft");
-        System.out.println("Price     : ₹" + price);
+
+    public String getAmenities() {
+        return amenities;
     }
 }
