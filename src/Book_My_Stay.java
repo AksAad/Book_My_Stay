@@ -1,8 +1,7 @@
-import java.util.List;
-
 public class Book_My_Stay {
 
     public static void main(String[] args) {
+
         AddOnServiceManager manager = new AddOnServiceManager();
 
         AddOnService breakfast = new AddOnService("Breakfast", 25.0);
@@ -23,9 +22,21 @@ public class Book_My_Stay {
             System.out.println(service.getServiceName() + " - $" + service.getCost());
         }
 
-
         double totalCost = manager.calculateTotalServiceCost(reservationId);
-
         System.out.println("Total Add-On Cost: $" + totalCost);
+
+
+        BookingHistory history = new BookingHistory();
+
+        Reservation r1 = new Reservation("Abhi", "Single");
+        Reservation r2 = new Reservation("Subha", "Double");
+        Reservation r3 = new Reservation("Vanmathi", "Suite");
+
+        history.addReservation(r1);
+        history.addReservation(r2);
+        history.addReservation(r3);
+
+        BookingReportService reportService = new BookingReportService();
+        reportService.generateReport(history);
     }
 }
