@@ -23,6 +23,7 @@ public class Book_My_Stay {
             System.out.println(service.getServiceName() + " - $" + service.getCost());
         }
 
+
         double totalCost = manager.calculateTotalServiceCost(reservationId);
 
         System.out.println("Total Add-On Cost: $" + totalCost);
