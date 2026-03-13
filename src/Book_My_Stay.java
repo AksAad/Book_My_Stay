@@ -34,6 +34,7 @@ public class Book_My_Stay {
 
         history.addReservation(r1);
         history.addReservation(r2);
+
         history.addReservation(r3);
 
         BookingReportService reportService = new BookingReportService();
