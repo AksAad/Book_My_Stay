@@ -1,3 +1,4 @@
+```java
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,20 +21,22 @@ public class Book_My_Stay {
             System.out.print("Enter room type (Single/Double/Suite): ");
             String roomType = scanner.nextLine();
 
-
+            // Validate booking input
             validator.validate(guestName, roomType, inventory);
 
-
+            // Create reservation
             Reservation reservation = new Reservation(guestName, roomType);
+            String reservationId = "RES1001";
 
+            // ==============================
+            // USE CASE 7 : ADD-ON SERVICES
+            // ==============================
 
             AddOnServiceManager manager = new AddOnServiceManager();
 
             AddOnService breakfast = new AddOnService("Breakfast", 25.0);
             AddOnService spa = new AddOnService("Spa", 60.0);
             AddOnService airportPickup = new AddOnService("Airport Pickup", 40.0);
-
-            String reservationId = "RES1001";
 
             manager.addService(reservationId, breakfast);
             manager.addService(reservationId, spa);
@@ -49,6 +52,11 @@ public class Book_My_Stay {
             double totalCost = manager.calculateTotalServiceCost(reservationId);
             System.out.println("Total Add-On Cost: $" + totalCost);
 
+
+            // ==============================
+            // USE CASE 8 : BOOKING HISTORY
+            // ==============================
+
             BookingHistory history = new BookingHistory();
 
             history.addReservation(reservation);
@@ -56,14 +64,34 @@ public class Book_My_Stay {
             history.addReservation(new Reservation("Vanmathi", "Suite"));
 
             BookingReportService reportService = new BookingReportService();
+
             System.out.println("\nBooking History and Reporting");
             reportService.generateReport(history);
+
+
+            CancellationService cancellationService = new CancellationService();
+
+            cancellationService.registerBooking(reservationId, roomType);
+
+            System.out.println("\nBooking Cancellation");
+
+            cancellationService.cancelBooking(reservationId, inventory);
+
+            cancellationService.showRollbackHistory();
+
+
+            System.out.println("\nUpdated " + roomType + " Room Availability: "
+                    + inventory.getAvailableRooms(roomType));
+
         }
         catch (InvalidBookingException e) {
+
             System.out.println("Booking failed: " + e.getMessage());
+
         }
         finally {
             scanner.close();
         }
     }
 }
+```
