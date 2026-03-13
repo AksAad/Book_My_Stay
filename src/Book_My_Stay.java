@@ -1,45 +1,69 @@
 import java.util.List;
+import java.util.Scanner;
 
 public class Book_My_Stay {
 
     public static void main(String[] args) {
 
-        AddOnServiceManager manager = new AddOnServiceManager();
+        System.out.println("Booking Validation");
 
-        AddOnService breakfast = new AddOnService("Breakfast", 25.0);
-        AddOnService spa = new AddOnService("Spa", 60.0);
-        AddOnService airportPickup = new AddOnService("Airport Pickup", 40.0);
+        Scanner scanner = new Scanner(System.in);
 
-        String reservationId = "RES1001";
+        RoomInventory inventory = new RoomInventory();
+        ReservationValidator validator = new ReservationValidator();
 
-        manager.addService(reservationId, breakfast);
-        manager.addService(reservationId, spa);
-        manager.addService(reservationId, airportPickup);
+        try {
 
-        System.out.println("Services for Reservation: " + reservationId);
+            System.out.print("Enter guest name: ");
+            String guestName = scanner.nextLine();
 
-        List<AddOnService> services = manager.getServices(reservationId);
+            System.out.print("Enter room type (Single/Double/Suite): ");
+            String roomType = scanner.nextLine();
 
-        for (AddOnService service : services) {
-            System.out.println(service.getServiceName() + " - $" + service.getCost());
+
+            validator.validate(guestName, roomType, inventory);
+
+
+            Reservation reservation = new Reservation(guestName, roomType);
+
+
+            AddOnServiceManager manager = new AddOnServiceManager();
+
+            AddOnService breakfast = new AddOnService("Breakfast", 25.0);
+            AddOnService spa = new AddOnService("Spa", 60.0);
+            AddOnService airportPickup = new AddOnService("Airport Pickup", 40.0);
+
+            String reservationId = "RES1001";
+
+            manager.addService(reservationId, breakfast);
+            manager.addService(reservationId, spa);
+            manager.addService(reservationId, airportPickup);
+
+            System.out.println("\nServices for Reservation: " + reservationId);
+
+            List<AddOnService> services = manager.getServices(reservationId);
+            for (AddOnService service : services) {
+                System.out.println(service.getServiceName() + " - $" + service.getCost());
+            }
+
+            double totalCost = manager.calculateTotalServiceCost(reservationId);
+            System.out.println("Total Add-On Cost: $" + totalCost);
+
+            BookingHistory history = new BookingHistory();
+
+            history.addReservation(reservation);
+            history.addReservation(new Reservation("Subha", "Double"));
+            history.addReservation(new Reservation("Vanmathi", "Suite"));
+
+            BookingReportService reportService = new BookingReportService();
+            System.out.println("\nBooking History and Reporting");
+            reportService.generateReport(history);
         }
-
-        double totalCost = manager.calculateTotalServiceCost(reservationId);
-        System.out.println("Total Add-On Cost: $" + totalCost);
-
-
-        BookingHistory history = new BookingHistory();
-
-        Reservation r1 = new Reservation("Abhi", "Single");
-        Reservation r2 = new Reservation("Subha", "Double");
-        Reservation r3 = new Reservation("Vanmathi", "Suite");
-
-        history.addReservation(r1);
-        history.addReservation(r2);
-
-        history.addReservation(r3);
-
-        BookingReportService reportService = new BookingReportService();
-        reportService.generateReport(history);
+        catch (InvalidBookingException e) {
+            System.out.println("Booking failed: " + e.getMessage());
+        }
+        finally {
+            scanner.close();
+        }
     }
 }
