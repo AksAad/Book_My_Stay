@@ -2,7 +2,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Book_My_Stay {
-
     public static void main(String[] args) {
 
         System.out.println("Booking Validation");
@@ -11,6 +10,14 @@ public class Book_My_Stay {
 
         RoomInventory inventory = new RoomInventory();
         ReservationValidator validator = new ReservationValidator();
+
+
+        FilePersistenceService persistenceService = new FilePersistenceService();
+        String filePath = "inventory.txt";
+
+        System.out.println("\nSystem Recovery");
+        persistenceService.loadInventory(inventory, filePath);
+
         try {
 
             System.out.print("Enter guest name: ");
@@ -111,8 +118,10 @@ public class Book_My_Stay {
 
         }
         finally {
+
+            persistenceService.saveInventory(inventory, filePath);
+
             scanner.close();
         }
     }
 }
-
