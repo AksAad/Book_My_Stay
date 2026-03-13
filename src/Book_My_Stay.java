@@ -1,4 +1,3 @@
-```java
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,7 +11,6 @@ public class Book_My_Stay {
 
         RoomInventory inventory = new RoomInventory();
         ReservationValidator validator = new ReservationValidator();
-
         try {
 
             System.out.print("Enter guest name: ");
@@ -21,16 +19,10 @@ public class Book_My_Stay {
             System.out.print("Enter room type (Single/Double/Suite): ");
             String roomType = scanner.nextLine();
 
-            // Validate booking input
             validator.validate(guestName, roomType, inventory);
 
-            // Create reservation
             Reservation reservation = new Reservation(guestName, roomType);
             String reservationId = "RES1001";
-
-            // ==============================
-            // USE CASE 7 : ADD-ON SERVICES
-            // ==============================
 
             AddOnServiceManager manager = new AddOnServiceManager();
 
@@ -53,9 +45,6 @@ public class Book_My_Stay {
             System.out.println("Total Add-On Cost: $" + totalCost);
 
 
-            // ==============================
-            // USE CASE 8 : BOOKING HISTORY
-            // ==============================
 
             BookingHistory history = new BookingHistory();
 
@@ -79,9 +68,41 @@ public class Book_My_Stay {
 
             cancellationService.showRollbackHistory();
 
+            System.out.println("\nUpdated " + roomType + " Room Availability: " + inventory.getAvailableRooms(roomType));
 
-            System.out.println("\nUpdated " + roomType + " Room Availability: "
-                    + inventory.getAvailableRooms(roomType));
+            System.out.println("\nConcurrent Booking Simulation");
+
+            BookingRequestQueue bookingQueue = new BookingRequestQueue();
+            RoomAllocationService allocationService = new RoomAllocationService();
+
+            bookingQueue.addRequest(new Reservation("Abhi", "Single"));
+            bookingQueue.addRequest(new Reservation("Vanmathi", "Double"));
+            bookingQueue.addRequest(new Reservation("Kumar", "Suite"));
+            bookingQueue.addRequest(new Reservation("Subha", "Single"));
+
+            Thread t1 = new Thread(
+                    new ConcurrentBookingProcessor(
+                            bookingQueue, inventory, allocationService));
+
+            Thread t2 = new Thread(
+                    new ConcurrentBookingProcessor(
+                            bookingQueue, inventory, allocationService));
+
+            t1.start();
+            t2.start();
+
+            try {
+                t1.join();
+                t2.join();
+            }
+            catch (InterruptedException e) {
+                System.out.println("Thread execution interrupted.");
+            }
+
+            System.out.println("\nRemaining Inventory:");
+            System.out.println("Single: " + inventory.getAvailableRooms("Single"));
+            System.out.println("Double: " + inventory.getAvailableRooms("Double"));
+            System.out.println("Suite: " + inventory.getAvailableRooms("Suite"));
 
         }
         catch (InvalidBookingException e) {
@@ -94,4 +115,4 @@ public class Book_My_Stay {
         }
     }
 }
-```
+
